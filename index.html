@@ -4,22 +4,37 @@
 <meta charset="UTF-8">
 <title>Totally Safe Website</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-  body {
+  html, body {
     margin: 0;
-    height: 100vh;
+    padding: 0;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  }
+
+  body {
+    min-height: 100svh;
     background: black;
     color: white;
     font-family: monospace;
-    transition: background 0.05s;
   }
 
-  button {
-    padding: 25px 50px;
+  /* Start overlay */
+  #overlay {
+    position: fixed;
+    inset: 0;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  #startBtn {
+    padding: 24px 48px;
     font-size: 26px;
     background: crimson;
     color: white;
@@ -30,7 +45,7 @@
 
   .spam {
     position: absolute;
-    font-size: 38px;
+    font-size: 36px;
     font-weight: bold;
     pointer-events: none;
     animation: shake 0.1s infinite;
@@ -46,16 +61,20 @@
 
 <body>
 
-<button id="startBtn">CLICK ME 😇</button>
+<div id="overlay">
+  <button id="startBtn">TAP TO CONTINUE 😇</button>
+</div>
 
-<audio id="sound" src="sound.mpeg" loop></audio>
+<audio id="sound" src="sound.mp3.mpeg" loop></audio>
+<!-- change to sound.mp3 if you renamed -->
 
 <script>
 let flashInt, lagInt, fsInt, rotateInt, vibrateInt, alertInt;
 const sound = document.getElementById("sound");
+const overlay = document.getElementById("overlay");
 
 function randColor() {
-  return `hsl(${Math.random() * 360}, 100%, 50%)`;
+  return `hsl(${Math.random() * 360},100%,50%)`;
 }
 
 function fullscreen() {
@@ -66,7 +85,8 @@ function startRotation() {
   let angle = 0;
   rotateInt = setInterval(() => {
     angle += Math.random() * 15 - 7;
-    document.body.style.transform = `rotate(${angle}deg) scale(1.05)`;
+    document.body.style.transform =
+      `rotate(${angle}deg) scale(1.05)`;
   }, 100);
 }
 
@@ -87,7 +107,7 @@ function startChaos() {
   }, 60);
 
   lagInt = setInterval(() => {
-    for (let i = 0; i < 35; i++) {
+    for (let i = 0; i < 30; i++) {
       const d = document.createElement("div");
       d.className = "spam";
       d.textContent = "⚠ SYSTEM ERROR ⚠";
@@ -122,7 +142,7 @@ function stopAll() {
   navigator.vibrate(0);
 
   document.body.style.transform = "none";
-  document.body.innerHTML = "<h1>😈 ESCAPE FAILED</h1>";
+  document.body.innerHTML = "<h1 style='text-align:center'>😈 ESCAPE FAILED</h1>";
 
   if (document.fullscreenElement) {
     document.exitFullscreen();
@@ -130,11 +150,12 @@ function stopAll() {
 }
 
 document.getElementById("startBtn").addEventListener("click", () => {
+  overlay.style.display = "none";
   fullscreen();
   startChaos();
 });
 
-// SECRET EXIT (keep this)
+// secret exit (keep this)
 document.addEventListener("keydown", e => {
   if (e.key === "Escape" && e.ctrlKey && e.shiftKey) {
     stopAll();
