@@ -64,15 +64,23 @@
   <button id="startBtn">TAP TO CONTINUE 😇</button>
 </div>
 
-<!-- AUDIO (MPEG FIXED) -->
+<!-- AUDIO -->
 <audio id="sound" preload="auto" playsinline>
   <source src="sound.mpeg" type="audio/mpeg">
 </audio>
 
 <script>
 let flashInt, lagInt, fsInt, rotateInt, vibrateInt, alertInt;
+
 const sound = document.getElementById("sound");
 const overlay = document.getElementById("overlay");
+
+/* 🔁 HARD LOOP FIX (MOBILE SAFE) */
+sound.loop = true;
+sound.addEventListener("ended", () => {
+  sound.currentTime = 0;
+  sound.play();
+});
 
 function randColor() {
   return `hsl(${Math.random() * 360},100%,50%)`;
@@ -148,15 +156,16 @@ function stopAll() {
   }
 }
 
-/* 🔊 MOBILE AUDIO UNLOCK — THIS IS THE KEY PART */
+/* ▶️ USER TAP = AUDIO UNLOCK */
 document.getElementById("startBtn").addEventListener("click", () => {
   overlay.style.display = "none";
 
   fullscreen();
 
   sound.muted = false;
-  sound.currentTime = 0;
   sound.volume = 1;
+  sound.currentTime = 0;
+  sound.loop = true;
 
   sound.play().catch(err => {
     console.log("Audio blocked:", err);
