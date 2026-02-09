@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Totally Safe Website</title>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: black;
+    color: white;
+    font-family: monospace;
+    transition: background 0.05s;
+  }
+
+  button {
+    padding: 25px 50px;
+    font-size: 26px;
+    background: crimson;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  .spam {
+    position: absolute;
+    font-size: 38px;
+    font-weight: bold;
+    pointer-events: none;
+    animation: shake 0.1s infinite;
+  }
+
+  @keyframes shake {
+    0% { transform: translate(2px, 2px); }
+    50% { transform: translate(-2px, -2px); }
+    100% { transform: translate(2px, -2px); }
+  }
+</style>
+</head>
+
+<body>
+
+<button id="startBtn">CLICK ME 😇</button>
+
+<audio id="sound" src="sound.mpeg" loop></audio>
+
+<script>
+let flashInt, lagInt, fsInt, rotateInt, vibrateInt, alertInt;
+const sound = document.getElementById("sound");
+
+function randColor() {
+  return `hsl(${Math.random() * 360}, 100%, 50%)`;
+}
+
+function fullscreen() {
+  document.documentElement.requestFullscreen().catch(()=>{});
+}
+
+function startRotation() {
+  let angle = 0;
+  rotateInt = setInterval(() => {
+    angle += Math.random() * 15 - 7;
+    document.body.style.transform = `rotate(${angle}deg) scale(1.05)`;
+  }, 100);
+}
+
+function startVibration() {
+  if ("vibrate" in navigator) {
+    vibrateInt = setInterval(() => {
+      navigator.vibrate([300,100,300,100,500]);
+    }, 1500);
+  }
+}
+
+function startChaos() {
+  sound.volume = 1;
+  sound.play();
+
+  flashInt = setInterval(() => {
+    document.body.style.background = randColor();
+  }, 60);
+
+  lagInt = setInterval(() => {
+    for (let i = 0; i < 35; i++) {
+      const d = document.createElement("div");
+      d.className = "spam";
+      d.textContent = "⚠ SYSTEM ERROR ⚠";
+      d.style.color = randColor();
+      d.style.top = Math.random() * 100 + "%";
+      d.style.left = Math.random() * 100 + "%";
+      document.body.appendChild(d);
+      setTimeout(() => d.remove(), 2000);
+    }
+  }, 200);
+
+  fsInt = setInterval(fullscreen, 1200);
+
+  alertInt = setInterval(() => {
+    alert("CRITICAL SYSTEM FAILURE!");
+  }, 6000);
+
+  startRotation();
+  startVibration();
+}
+
+function stopAll() {
+  clearInterval(flashInt);
+  clearInterval(lagInt);
+  clearInterval(fsInt);
+  clearInterval(rotateInt);
+  clearInterval(vibrateInt);
+  clearInterval(alertInt);
+
+  sound.pause();
+  sound.currentTime = 0;
+  navigator.vibrate(0);
+
+  document.body.style.transform = "none";
+  document.body.innerHTML = "<h1>😈 ESCAPE FAILED</h1>";
+
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  }
+}
+
+document.getElementById("startBtn").addEventListener("click", () => {
+  fullscreen();
+  startChaos();
+});
+
+// SECRET EXIT (keep this)
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && e.ctrlKey && e.shiftKey) {
+    stopAll();
+  }
+});
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+window.onbeforeunload = () => "NO ESCAPE 😈";
+</script>
+
+</body>
+</html>
